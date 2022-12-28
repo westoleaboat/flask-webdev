@@ -1,2 +1,9 @@
 .idea
 *.pyc
+.venv
+__pycache__
+data.db
+*.pyc
+.DS_Store
+.env
+.idea
