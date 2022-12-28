@@ -28,6 +28,9 @@ Flask applications include a development web server that can be started with the
 (venv) $ export FLASK_APP=app.py
 (venv) $ flask run
 
+## Run dockerfile locally
+docker run -p 5000:5000 -w /app -v "$(pwd):/app" IMAGE_NAME sh -c "flask run"
+
 ## Your first REST API endpoint
 For now your db will be a python list.
 
