@@ -29,8 +29,13 @@ Flask applications include a development web server that can be started with the
 (venv) $ flask run
 
 ## Run dockerfile locally
-docker run -p 5000:5000 -w /app -v "$(pwd):/app" IMAGE_NAME sh -c "flask run"
-
+build image with:
+docker build -t IMAGE-NAME . 
+~~docker run -dp 5000:5000 -w /app -v "$(pwd):/app" IMAGE-NAME
+docker run -p 5000:5000 -w /app -v "$(pwd):/app" IMAGE_NAME sh -c "flask run" not this one maybe~~
+docker run -p 5000:5000 -w /app -v "$(pwd):/app" IMAGE-NAME sh -c "flask run --host 0.0.0.0"
+follow process:
+docker container logs -f CONTAINER-ID
 ## Your first REST API endpoint
 For now your db will be a python list.
 
@@ -84,3 +89,9 @@ https://jwt.io/introduction
 docker build -t my-flask-site .
 run the container
 docker run -p 5000:5000 my-flask-site
+
+## db migrations 
+1. Make the necessary changes in the database models.
+2. Generate a migration with the flask db migrate command.
+3. Review the generated migration script and correct it if it has any inaccuracies.
+4. Apply the changes to the database with the flask db upgrade command.

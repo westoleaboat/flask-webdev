@@ -1,4 +1,5 @@
-from flask import Flask, render_template, jsonify
+from flask import Flask, render_template, jsonify, redirect, url_for, session, \
+    flash
 from flask_bootstrap import Bootstrap
 from flask_moment import Moment
 from flask_smorest import abort, Api
@@ -14,7 +15,8 @@ from resources.item import blp as ItemBlueprint
 from resources.store import blp as StoreBlueprint
 from resources.tag import blp as TagBlueprint
 from resources.user import blp as UserBlueprint
-
+# from resources.index import blp as IndexBlueprint
+from resources.forms import NameForm
 # from db import stores, items
 from db import db
 import models
@@ -25,7 +27,7 @@ from blocklist import BLOCKLIST
 def create_app(db_url=None):
     app = Flask(__name__)
     load_dotenv()
-
+    app.config["SECRET_KEY"]= 'super hard string'
     # app.config['SECRET-KEY'] = 'super hard string'
     
     app.config["PROPAGATE_EXCEPTIONS"] = True
@@ -48,7 +50,6 @@ def create_app(db_url=None):
 
     app.config["JWT_SECRET_KEY"] = "chacotasprod" #change this secrets.SystemRandom().getrandbits(128)
     jwt = JWTManager(app)
-
     @jwt.additional_claims_loader
     def add_claims_to_jwt(identity):
         if identity == 1:
@@ -116,12 +117,20 @@ def create_app(db_url=None):
             db.create_all()
         # db.create_all()
 
-    @app.route('/')
+    @app.route('/', methods=['GET', 'POST'])
     def index():
-        '''
-        flask-moment assumes that timestamps handled by the server-side application are 'naive' datetime objects in UTC.
-        '''
-        return render_template('index.html', current_time=datetime.utcnow())
+        name = None
+        form = NameForm()
+        if form.validate_on_submit():
+            old_name = session.get('name')
+            if old_name is not None and old_name != form.name.data:
+                flash('Looks like you have changed your name!')
+            session['name'] = form.name.data
+            return redirect(url_for('index'))
+            # form.name.data = ''
+        return render_template('index.html', form=form, name=session.get(
+            'name'),
+                               current_time=datetime.utcnow())
 
     @app.route('/user/<name>')
     def user(name):
@@ -130,8 +139,7 @@ def create_app(db_url=None):
         values for variables referenced in the template. In this example
         is receiving a name variable.
         '''
-        return render_template('user.html', name=name)
-
+        return render_template('user.html', name=name, current_time=datetime.utcnow())
 
     @app.errorhandler(404)
     def page_not_found(e):
@@ -145,5 +153,6 @@ def create_app(db_url=None):
     api.register_blueprint(StoreBlueprint)
     api.register_blueprint(TagBlueprint)
     api.register_blueprint(UserBlueprint)
+    # api.register_blueprint(IndexBlueprint)
 
     return app

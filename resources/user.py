@@ -13,10 +13,12 @@ from db import db
 from models import UserModel
 from schemas import UserSchema, UserRegisterSchema
 from blocklist import BLOCKLIST
+from flask import render_template
+from datetime import datetime
 
 blp = Blueprint("Users", "users", description="Operations on users")
 
-connection = redis.from_url(os.getenv("REDIS_URL"))
+# connection = redis.from_url(os.getenv("REDIS_URL"))
 # queue = Queue("emails", connection=connection)
 
 
@@ -99,3 +101,21 @@ class TokenRefresh(MethodView):
         jti = get_jwt()["jti"]
         BLOCKLIST.add(jti)
         return {"access_token": new_token}, 200
+
+# @blp.route('/')
+# class Index(MethodView):
+#     def index(self):
+#         '''
+#         flask-moment assumes that timestamps handled by the server-side application are 'naive' datetime objects in UTC.
+#         '''
+#         return {render_template('index.html', current_time=datetime.utcnow())}, 200
+#
+#
+#     @blp.route('/user/<name>')
+#     def user(name):
+#         '''
+#         Any additional arguments are key-value pairs that represent actual
+#         values for variables referenced in the template. In this example
+#         is receiving a name variable.
+#         '''
+#         return {render_template('user.html', name=name)}, 200
