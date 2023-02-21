@@ -1,6 +1,9 @@
 # flask-webdev
 flaskwebdevelopment2nd
 
+![Screenshot_select-area_20230221175227](https://user-images.githubusercontent.com/68698872/220393735-9bd2ce94-37e1-4193-8d65-8e265bdeb000.png)
+
+
 ## use pipenv to manage your project dependencies:
 $ pipenv install
 
